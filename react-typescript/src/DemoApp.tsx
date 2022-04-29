@@ -1,20 +1,26 @@
 import React from 'react'
-import FullCalendar, { EventApi, DateSelectArg, EventClickArg, EventContentArg, formatDate } from '@fullcalendar/react'
+import FullCalendar, {
+  EventApi,
+  EventClickArg,
+  EventContentArg,
+  formatDate,
+} from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
-import interactionPlugin from '@fullcalendar/interaction'
-import { INITIAL_EVENTS, createEventId } from './event-utils'
+import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction'
+import { createEventId, INITIAL_EVENTS, INITIAL_TEACHERS } from './event-utils'
+import listPlugin from '@fullcalendar/list'
+import resourceTimelinePlugin from '@fullcalendar/resource-timeline'
+import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid'
+import resourceDayGridPlugin from '@fullcalendar/resource-daygrid'
 
 interface DemoAppState {
-  weekendsVisible: boolean
   currentEvents: EventApi[]
 }
 
 export default class DemoApp extends React.Component<{}, DemoAppState> {
-
   state: DemoAppState = {
-    weekendsVisible: true,
-    currentEvents: []
+    currentEvents: [],
   }
 
   render() {
@@ -23,20 +29,30 @@ export default class DemoApp extends React.Component<{}, DemoAppState> {
         {this.renderSidebar()}
         <div className='demo-app-main'>
           <FullCalendar
-            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            plugins={[
+              dayGridPlugin,
+              timeGridPlugin,
+              interactionPlugin,
+              listPlugin,
+              resourceTimelinePlugin,
+              resourceTimeGridPlugin,
+              resourceDayGridPlugin,
+            ]}
             headerToolbar={{
               left: 'prev,next today',
               center: 'title',
-              right: 'dayGridMonth,timeGridWeek,timeGridDay'
+              right:
+                'resourceDayGridDay,resourceDayGridWeek,resourceDayGridMonth resourceTimeGridDay,resourceTimeGridWeek resourceTimelineDay,resourceTimelineWeek,resourceTimelineMonth timeGridDay,timeGridWeek,dayGridMonth listDay,listWeek',
             }}
-            initialView='dayGridMonth'
+            initialView='resourceTimelineDay'
             editable={true}
-            selectable={true}
-            selectMirror={true}
+            selectable={false}
+            selectMirror={false}
             dayMaxEvents={true}
-            weekends={this.state.weekendsVisible}
+            allDaySlot={false}
+            slotDuration={'01:00:00'}
             initialEvents={INITIAL_EVENTS} // alternatively, use the `events` setting to fetch from a feed
-            select={this.handleDateSelect}
+            dateClick={this.handleDateClick}
             eventContent={renderEventContent} // custom render function
             eventClick={this.handleEventClick}
             eventsSet={this.handleEvents} // called after events are initialized/added/changed/removed
@@ -45,6 +61,8 @@ export default class DemoApp extends React.Component<{}, DemoAppState> {
             eventChange={function(){}}
             eventRemove={function(){}}
             */
+            resourceAreaHeaderContent={'Teachers'}
+            resources={INITIAL_TEACHERS}
           />
         </div>
       </div>
@@ -63,32 +81,14 @@ export default class DemoApp extends React.Component<{}, DemoAppState> {
           </ul>
         </div>
         <div className='demo-app-sidebar-section'>
-          <label>
-            <input
-              type='checkbox'
-              checked={this.state.weekendsVisible}
-              onChange={this.handleWeekendsToggle}
-            ></input>
-            toggle weekends
-          </label>
-        </div>
-        <div className='demo-app-sidebar-section'>
           <h2>All Events ({this.state.currentEvents.length})</h2>
-          <ul>
-            {this.state.currentEvents.map(renderSidebarEvent)}
-          </ul>
+          <ul>{this.state.currentEvents.map(renderSidebarEvent)}</ul>
         </div>
       </div>
     )
   }
 
-  handleWeekendsToggle = () => {
-    this.setState({
-      weekendsVisible: !this.state.weekendsVisible
-    })
-  }
-
-  handleDateSelect = (selectInfo: DateSelectArg) => {
+  handleDateClick = (selectInfo: DateClickArg) => {
     let title = prompt('Please enter a new title for your event')
     let calendarApi = selectInfo.view.calendar
 
@@ -98,25 +98,28 @@ export default class DemoApp extends React.Component<{}, DemoAppState> {
       calendarApi.addEvent({
         id: createEventId(),
         title,
-        start: selectInfo.startStr,
-        end: selectInfo.endStr,
-        allDay: selectInfo.allDay
+        start: selectInfo.dateStr,
+        allDay: selectInfo.allDay,
+        resourceId: selectInfo.resource?.id,
       })
     }
   }
 
   handleEventClick = (clickInfo: EventClickArg) => {
-    if (confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'`)) {
+    if (
+      confirm(
+        `Are you sure you want to delete the event '${clickInfo.event.title}'`
+      )
+    ) {
       clickInfo.event.remove()
     }
   }
 
   handleEvents = (events: EventApi[]) => {
     this.setState({
-      currentEvents: events
+      currentEvents: events,
     })
   }
-
 }
 
 function renderEventContent(eventContent: EventContentArg) {
@@ -131,8 +134,15 @@ function renderEventContent(eventContent: EventContentArg) {
 function renderSidebarEvent(event: EventApi) {
   return (
     <li key={event.id}>
-      <b>{formatDate(event.start!, {year: 'numeric', month: 'short', day: 'numeric'})}</b>
-      <i>{event.title}</i>
+      <b>
+        {formatDate(event.start!, {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+        })}
+      </b>
+      <i>{event.title}</i>{' '}
+      {event.getResources().map((resource) => resource.title)}
     </li>
   )
 }
