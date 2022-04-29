@@ -1,9 +1,9 @@
 import { EventInput } from '@fullcalendar/react'
+import moment from 'moment'
 
-const EVENTS_COUNT = 1000
+const EVENTS_COUNT = 1500
 const TEACHERS_COUNT = 100
 let eventGuid = 0
-let todayStr = new Date().toISOString().replace(/T.*$/, '') // YYYY-MM-DD of today
 
 export const INITIAL_EVENTS: EventInput[] = []
 export const INITIAL_TEACHERS: Array<{
@@ -21,10 +21,15 @@ for (let i = 0; i < TEACHERS_COUNT; i++) {
 }
 
 for (let i = 0; i < EVENTS_COUNT; i++) {
+  const start = moment()
+    .day(i % 7)
+    .hour(i % 24)
+    .minute(0)
+
   INITIAL_EVENTS.push({
     id: createEventId(),
     title: 'Event ' + i,
-    start: `${todayStr}T${String(i % 24).padStart(2, '0')}:00:00`,
+    start: start.toISOString(),
     resourceId:
       INITIAL_TEACHERS[Math.floor(Math.random() * INITIAL_TEACHERS.length)].id,
   })

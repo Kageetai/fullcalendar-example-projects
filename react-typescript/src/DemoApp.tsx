@@ -14,6 +14,7 @@ import resourceTimelinePlugin from '@fullcalendar/resource-timeline'
 import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid'
 import resourceDayGridPlugin from '@fullcalendar/resource-daygrid'
 import scrollGridPlugin from '@fullcalendar/scrollgrid'
+import momentPlugin, { toMoment } from '@fullcalendar/moment'
 
 interface DemoAppState {
   slotEventOverlap: boolean
@@ -43,15 +44,17 @@ export default class DemoApp extends React.Component<{}, DemoAppState> {
               resourceTimeGridPlugin,
               resourceDayGridPlugin,
               scrollGridPlugin,
+              momentPlugin,
             ]}
             headerToolbar={{
               left: 'prev,next today',
               center: 'title',
               right:
-                'resourceDayGridDay,resourceDayGridWeek,resourceDayGridMonth resourceTimeGridDay,resourceTimeGridWeek resourceTimelineDay,resourceTimelineWeek,resourceTimelineMonth timeGridDay,timeGridWeek,dayGridMonth listDay,listWeek',
+                'resourceDayGridDay,resourceDayGridWeek,resourceDayGridMonth resourceTimeGridDay,resourceTimeGridWeek resourceTimelineDay,resourceTimelineWeek,resourceTimelineMonth timeGridDay,timeGridWeek dayGridWeek,dayGridMonth listDay,listWeek',
             }}
             initialView='resourceTimelineDay'
             height='auto'
+            resourceAreaWidth='20%'
             dayMinWidth={100}
             editable={true}
             selectable={false}
