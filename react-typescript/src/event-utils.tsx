@@ -4,12 +4,15 @@ import moment from 'moment'
 const EVENTS_COUNT = 1500
 const TEACHERS_COUNT = 100
 let eventGuid = 0
+const teacherScale = ['min', '10-15', '15-25']
+type TeacherPerformance = 'min' | '10-15' | '15-25'
 
 export const INITIAL_EVENTS: EventInput[] = []
 export const INITIAL_TEACHERS: Array<{
   id: string
   title: string
   eventColor: string
+  scale: TeacherPerformance
 }> = []
 
 for (let i = 0; i < TEACHERS_COUNT; i++) {
@@ -17,6 +20,9 @@ for (let i = 0; i < TEACHERS_COUNT; i++) {
     id: 'teacherId' + i,
     title: 'Teacher ' + i,
     eventColor: '#' + ((Math.random() * 0xffffff) << 0).toString(16),
+    scale: teacherScale[
+      Math.floor(Math.random() * teacherScale.length)
+    ] as TeacherPerformance,
   })
 }
 

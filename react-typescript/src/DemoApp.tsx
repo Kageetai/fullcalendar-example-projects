@@ -55,6 +55,7 @@ export default class DemoApp extends React.Component<{}, DemoAppState> {
             initialView='resourceTimelineDay'
             height='auto'
             resourceAreaWidth='20%'
+            resourceGroupField='scale'
             dayMinWidth={100}
             editable={true}
             selectable={false}
