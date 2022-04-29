@@ -52,7 +52,7 @@ export default class DemoApp extends React.Component<{}, DemoAppState> {
               right:
                 'resourceDayGridDay,resourceDayGridWeek,resourceDayGridMonth resourceTimeGridDay,resourceTimeGridWeek resourceTimelineDay,resourceTimelineWeek,resourceTimelineMonth timeGridDay,timeGridWeek dayGridWeek,dayGridMonth listDay,listWeek',
             }}
-            initialView='resourceTimelineDay'
+            initialView='resourceTimelineWeek'
             height='auto'
             resourceAreaWidth='20%'
             resourceGroupField='scale'
