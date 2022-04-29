@@ -50,6 +50,6 @@ b { /* used for event dates/times */
 }
 
 .fc { /* the calendar root */
-  max-width: 1100px;
-  margin: 0 auto;
+  /*max-width: 1100px;*/
+  /*margin: 0 auto;*/
 }

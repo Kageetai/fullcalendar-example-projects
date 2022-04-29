@@ -13,13 +13,18 @@ import listPlugin from '@fullcalendar/list'
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline'
 import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid'
 import resourceDayGridPlugin from '@fullcalendar/resource-daygrid'
+import scrollGridPlugin from '@fullcalendar/scrollgrid'
 
 interface DemoAppState {
+  slotEventOverlap: boolean
+  datesAboveResources: boolean
   currentEvents: EventApi[]
 }
 
 export default class DemoApp extends React.Component<{}, DemoAppState> {
   state: DemoAppState = {
+    slotEventOverlap: false,
+    datesAboveResources: false,
     currentEvents: [],
   }
 
@@ -37,6 +42,7 @@ export default class DemoApp extends React.Component<{}, DemoAppState> {
               resourceTimelinePlugin,
               resourceTimeGridPlugin,
               resourceDayGridPlugin,
+              scrollGridPlugin,
             ]}
             headerToolbar={{
               left: 'prev,next today',
@@ -45,11 +51,15 @@ export default class DemoApp extends React.Component<{}, DemoAppState> {
                 'resourceDayGridDay,resourceDayGridWeek,resourceDayGridMonth resourceTimeGridDay,resourceTimeGridWeek resourceTimelineDay,resourceTimelineWeek,resourceTimelineMonth timeGridDay,timeGridWeek,dayGridMonth listDay,listWeek',
             }}
             initialView='resourceTimelineDay'
+            height='auto'
+            dayMinWidth={100}
             editable={true}
             selectable={false}
             selectMirror={false}
             dayMaxEvents={true}
             allDaySlot={false}
+            slotEventOverlap={this.state.slotEventOverlap}
+            datesAboveResources={this.state.datesAboveResources}
             slotDuration={'01:00:00'}
             initialEvents={INITIAL_EVENTS} // alternatively, use the `events` setting to fetch from a feed
             dateClick={this.handleDateClick}
@@ -81,11 +91,43 @@ export default class DemoApp extends React.Component<{}, DemoAppState> {
           </ul>
         </div>
         <div className='demo-app-sidebar-section'>
+          <label>
+            <input
+              type='checkbox'
+              checked={this.state.slotEventOverlap}
+              onChange={this.handleOverlapToggle}
+            ></input>
+            toggle overlap
+          </label>
+        </div>
+        <div className='demo-app-sidebar-section'>
+          <label>
+            <input
+              type='checkbox'
+              checked={this.state.datesAboveResources}
+              onChange={this.handleDatesAboveResourcesToggle}
+            ></input>
+            dates above teachers
+          </label>
+        </div>
+        <div className='demo-app-sidebar-section'>
           <h2>All Events ({this.state.currentEvents.length})</h2>
           <ul>{this.state.currentEvents.map(renderSidebarEvent)}</ul>
         </div>
       </div>
     )
+  }
+
+  handleOverlapToggle = () => {
+    this.setState({
+      slotEventOverlap: !this.state.slotEventOverlap,
+    })
+  }
+
+  handleDatesAboveResourcesToggle = () => {
+    this.setState({
+      datesAboveResources: !this.state.datesAboveResources,
+    })
   }
 
   handleDateClick = (selectInfo: DateClickArg) => {
