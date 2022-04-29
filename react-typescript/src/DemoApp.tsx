@@ -14,7 +14,7 @@ import resourceTimelinePlugin from '@fullcalendar/resource-timeline'
 import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid'
 import resourceDayGridPlugin from '@fullcalendar/resource-daygrid'
 import scrollGridPlugin from '@fullcalendar/scrollgrid'
-import momentPlugin, { toMoment } from '@fullcalendar/moment'
+import momentPlugin from '@fullcalendar/moment'
 
 interface DemoAppState {
   slotEventOverlap: boolean
@@ -88,34 +88,45 @@ export default class DemoApp extends React.Component<{}, DemoAppState> {
       <div className='demo-app-sidebar'>
         <div className='demo-app-sidebar-section'>
           <h2>Instructions</h2>
+
           <ul>
             <li>Select dates and you will be prompted to create a new event</li>
             <li>Drag, drop, and resize events</li>
             <li>Click an event to delete it</li>
           </ul>
         </div>
+
         <div className='demo-app-sidebar-section'>
-          <label>
-            <input
-              type='checkbox'
-              checked={this.state.slotEventOverlap}
-              onChange={this.handleOverlapToggle}
-            ></input>
-            toggle overlap
-          </label>
+          <h2>Options</h2>
+
+          <ul>
+            <li>
+              <label>
+                <input
+                  type='checkbox'
+                  checked={this.state.slotEventOverlap}
+                  onChange={this.handleOverlapToggle}
+                ></input>
+                toggle overlap
+              </label>
+            </li>
+
+            <li>
+              <label>
+                <input
+                  type='checkbox'
+                  checked={this.state.datesAboveResources}
+                  onChange={this.handleDatesAboveResourcesToggle}
+                ></input>
+                dates above teachers
+              </label>
+            </li>
+          </ul>
         </div>
-        <div className='demo-app-sidebar-section'>
-          <label>
-            <input
-              type='checkbox'
-              checked={this.state.datesAboveResources}
-              onChange={this.handleDatesAboveResourcesToggle}
-            ></input>
-            dates above teachers
-          </label>
-        </div>
+
         <div className='demo-app-sidebar-section'>
           <h2>All Events ({this.state.currentEvents.length})</h2>
+
           <ul>{this.state.currentEvents.map(renderSidebarEvent)}</ul>
         </div>
       </div>
