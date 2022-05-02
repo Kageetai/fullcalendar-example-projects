@@ -8,7 +8,12 @@ import FullCalendar, {
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction'
-import { createEventId, INITIAL_EVENTS, INITIAL_TEACHERS } from './event-utils'
+import {
+  createEventId,
+  INITIAL_EVENTS,
+  INITIAL_TEACHER_AVAILABILITIES,
+  INITIAL_TEACHERS,
+} from './event-utils'
 import listPlugin from '@fullcalendar/list'
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline'
 import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid'
@@ -19,6 +24,7 @@ import momentPlugin from '@fullcalendar/moment'
 interface DemoAppState {
   slotEventOverlap: boolean
   datesAboveResources: boolean
+  groupByScale: boolean
   currentEvents: EventApi[]
 }
 
@@ -26,6 +32,7 @@ export default class DemoApp extends React.Component<{}, DemoAppState> {
   state: DemoAppState = {
     slotEventOverlap: false,
     datesAboveResources: false,
+    groupByScale: false,
     currentEvents: [],
   }
 
@@ -55,7 +62,7 @@ export default class DemoApp extends React.Component<{}, DemoAppState> {
             initialView='resourceTimelineWeek'
             height='auto'
             resourceAreaWidth='20%'
-            resourceGroupField='scale'
+            resourceGroupField={this.state.groupByScale ? 'scale' : undefined}
             dayMinWidth={100}
             editable={true}
             selectable={false}
@@ -65,7 +72,7 @@ export default class DemoApp extends React.Component<{}, DemoAppState> {
             slotEventOverlap={this.state.slotEventOverlap}
             datesAboveResources={this.state.datesAboveResources}
             slotDuration={'01:00:00'}
-            initialEvents={INITIAL_EVENTS} // alternatively, use the `events` setting to fetch from a feed
+            eventSources={[INITIAL_EVENTS, INITIAL_TEACHER_AVAILABILITIES]}
             dateClick={this.handleDateClick}
             eventContent={renderEventContent} // custom render function
             eventClick={this.handleEventClick}
@@ -77,6 +84,20 @@ export default class DemoApp extends React.Component<{}, DemoAppState> {
             */
             resourceAreaHeaderContent={'Teachers'}
             resources={INITIAL_TEACHERS}
+            resourceAreaColumns={[
+              {
+                field: 'title',
+                headerContent: 'Name',
+              },
+              {
+                field: 'availabilitiesCount',
+                headerContent: 'Total Availabilities',
+              },
+              {
+                field: 'scale',
+                headerContent: 'Modifier',
+              },
+            ]}
           />
         </div>
       </div>
@@ -121,6 +142,17 @@ export default class DemoApp extends React.Component<{}, DemoAppState> {
                 dates above teachers
               </label>
             </li>
+
+            <li>
+              <label>
+                <input
+                  type='checkbox'
+                  checked={this.state.groupByScale}
+                  onChange={this.handleGroupByScaleToggle}
+                ></input>
+                group by scale
+              </label>
+            </li>
           </ul>
         </div>
 
@@ -142,6 +174,12 @@ export default class DemoApp extends React.Component<{}, DemoAppState> {
   handleDatesAboveResourcesToggle = () => {
     this.setState({
       datesAboveResources: !this.state.datesAboveResources,
+    })
+  }
+
+  handleGroupByScaleToggle = () => {
+    this.setState({
+      groupByScale: !this.state.groupByScale,
     })
   }
 
